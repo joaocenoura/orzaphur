@@ -5,8 +5,13 @@
     - git
 
 - name: create git user
-  user: shell=/bin/bash name=git password={{ git_user_passwd }}
+  user: shell=/bin/bash name={{ git_username }} password={{ git_password }} home={{ git_homedir }}
 #  explore later
 #  user: shell=//usr/bin/git-shell name=git password={{ git_user_passwd }}
 
 # get some web interface
+
+- name: create backup repository (if it doesn't exist)
+  shell: mkdir -p {{ git_homedir }}/backup.repo ; git init --bare {{ git_homedir }}/backup.repo creates={{ git_homedir }}/backup.repo
+  sudo: yes
+  sudo_user: ${git_username}
