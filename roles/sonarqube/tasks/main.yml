@@ -1,0 +1,44 @@
+---
+- name: default apps
+  apt: pkg={{item}} state=installed
+  with_items:
+    - python-apt
+    - python-pycurl
+  tags:
+    - packages
+
+#- name: add sonar key (where dafuq is it?)
+#  apt_key: url=http://pkg.sonarqube-ci.org/debian/sonarqube-ci.org.key state=present
+#  tags: repository
+
+- name: add sonar repository
+  apt_repository: repo='deb http://downloads.sourceforge.net/project/sonar-pkg/deb binary/' state=present
+  tags: repository
+
+- name: install sonarqube  
+  apt: pkg=sonar force=yes update_cache=yes state=installed
+  tags: packages
+  notify: restart sonarqube
+
+- name: configure sonarqube
+  template: src=sonar.properties.j2 dest=/opt/sonar/conf/sonar.properties owner=root group=root mode=755
+  tags: sonarqube
+  notify: restart sonarqube
+
+- name: sonarqube default db
+  mysql_db: name=sonar encoding=utf8 state=present
+  tags: sonarqube
+
+- name: sonarqube default user
+  mysql_user: name=sonar host=localhost password=sonar priv=sonar.*:ALL,GRANT state=present
+  tags: sonarqube
+
+- name: configure nginx
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/sonarqube owner=root group=root mode=755
+  tags: nginx
+  notify: restart nginx
+
+- name: Configure nginx (link files)
+  file: src=/etc/nginx/sites-available/sonarqube dest=/etc/nginx/sites-enabled/sonarqube state=link
+  tags: nginx
+  notify: restart nginx

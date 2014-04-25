@@ -1,0 +1,20 @@
+# vagrant hosts
+[git]
+git.joaocenoura.com ansible_ssh_host=127.0.0.1 ansible_ssh_port=2270
+
+[redmine]
+redmine.joaocenoura.com ansible_ssh_host=127.0.0.1 ansible_ssh_port=2270
+
+[jenkins]
+jenkins.joaocenoura.com ansible_ssh_host=127.0.0.1 ansible_ssh_port=2270
+
+[sonarqube]
+sonarqube.joaocenoura.com ansible_ssh_host=127.0.0.1 ansible_ssh_port=2270
+
+[ci]
+ci.joaocenoura.com ansible_ssh_host=127.0.0.1 ansible_ssh_port=2270
+# uncomment if deploying in different machines
+#git.joaocenoura.com
+#redmine.joaocenoura.com
+#jenkins.joaocenoura.com
+#sonarqube.joaocenoura.com

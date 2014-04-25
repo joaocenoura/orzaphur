@@ -1,0 +1,39 @@
+---
+# This playbook deploys the whole application stack in this site.  
+
+- name: apply common configuration to all nodes
+  hosts: ci
+  sudo: True
+  roles:
+    - common
+
+- name: configure and deploy Git
+  hosts: git
+  sudo: True
+  roles:
+    - git
+
+- name: configure and deploy Redmine
+  hosts: redmine
+  sudo: True
+  roles:
+    - redmine
+
+- name: configure and deploy Jenkins
+  hosts: jenkins
+  sudo: True
+  roles:
+    - jenkins
+
+- name: configure and deploy Sonarqube
+  hosts: sonarqube
+  sudo: True
+  roles:
+    - sonarqube
+
+#- name: configure and deploy Artifactory
+#  hosts: artifactory
+#  sudo: True
+
+#  roles:
+#    - artifactory

@@ -1,0 +1,12 @@
+---
+- name: default apps
+  apt: pkg={{item}} state=present
+  with_items:
+    - git
+
+- name: create git user
+  user: shell=/bin/bash name=git password={{ git_user_passwd }}
+#  explore later
+#  user: shell=//usr/bin/git-shell name=git password={{ git_user_passwd }}
+
+# get some web interface

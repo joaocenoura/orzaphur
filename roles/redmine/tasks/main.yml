@@ -1,0 +1,95 @@
+---
+# This playbook contains common plays that will be run on all nodes.
+# ref: http://www.debian-administration.org/article/673/Installing_Redmine_with_MySQL_Thin_and_Redmine_on_Debian_Squeeze
+- name: Default apps
+  apt: pkg={{item}} state=installed
+  with_items:
+    - mysql-server
+    - python-mysqldb
+    - redmine
+    - redmine-mysql
+    - thin
+    - nginx
+    - ssl-cert
+  tags:
+    - packages
+
+# stop thin & nginx
+# ensure mysql is started
+
+###############################################################################
+#		mysql
+###############################################################################
+# ref: https://coderwall.com/p/yez9yw
+- name: update /etc/mysql/my.cnf
+  template: src=mysql_my.cnf dest=/etc/mysql/my.cnf owner=root group=root mode=755
+
+- name: ensure mysql is running and starts on boot
+  service: name=mysql state=started enabled=true
+
+# Need to do this for idempotency, see
+# http://ansible.cc/docs/modules.html#mysql-user
+- name: update mysql root password for all root accounts
+  mysql_user: name=root host=localhost password={{ root_db_password }}
+
+- name: copy .my.cnf file with root password credentials
+  template: src=mysql_user-my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
+
+- name: update mysql root password for all root accounts
+  mysql_user: name=root host={{ item }} password={{ root_db_password }}
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+
+- name: ensure anonymous users are not in the database
+  mysql_user: name='' host={{ item }} state=absent
+  with_items:
+    - localhost
+    - "{{ inventory_hostname }}"
+
+- name: remove the test database
+  mysql_db: name=test state=absent
+
+- name: redmine default db
+  mysql_db: name=redmine_default encoding=utf8 state=present
+
+- name: redmine default user
+  mysql_user: name=redmine host=localhost password=redmine priv=redmine_default.*:ALL,GRANT state=present
+  tags: redmine
+
+###############################################################################
+#		nginx
+###############################################################################
+- name: Configure nginx (conf files)
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/redmine owner=root group=root mode=755
+  tags: redmine
+
+- name: Configure nginx (link files)
+  file: src=/etc/nginx/sites-available/redmine dest=/etc/nginx/sites-enabled/redmine state=link
+  tags: redmine
+
+- name: Configure nginx (remove default site)
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  tags: redmine
+  notify: restart nginx
+
+###############################################################################
+#		thin
+###############################################################################
+- name: Configure Thin (conf files)
+  template: src=thin.yml.j2 dest=/etc/thin1.9.1/redmine.yml owner=root group=root mode=644
+  tags: redmine
+
+- name: Configure Thin (log directory)
+  file: dest=/var/log/thin mode=755 owner=root group=root state=directory
+  tags: redmine
+
+- name: Configure Thin (log rotate)
+  template: src=thin-logrotate.conf.j2 dest=/etc/logrotate.d/thin
+  tags: redmine
+
+- name: Configure Thin (log directory)
+  file: dest=/var/run/redmine/sockets mode=755 owner=www-data group=www-data state=directory
+  tags: redmine
+  notify: restart thin

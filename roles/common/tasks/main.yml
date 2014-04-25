@@ -1,0 +1,30 @@
+---
+# This playbook contains common plays that will be run on all nodes.
+- name: default apps
+  apt: pkg={{item}} state=installed
+  with_items:
+    - vim
+    - ntp
+  tags:
+    - packages
+
+- name: configure dns
+  template: src=resolv.conf dest=/etc/resolv.conf
+
+###############################################################################
+#   ntp
+###############################################################################
+- name: configure ntp file
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  tags: ntp
+  notify: restart ntp
+
+- name: start the ntp service
+  service: name=ntp state=started enabled=true
+  tags: ntp
+
+# firewall
+
+# http proxy
+
+# security...?
