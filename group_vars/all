@@ -6,19 +6,53 @@ ntpserver: 192.168.1.2
 repository: https://github.com/bennojoy/mywebapp.git
 root_db_password: patanisca
 
+###############################################################################
+#		SSH KEYS
+###############################################################################
+ssh_keys_dir: /home/joao/devel/github/joaocenoura/orzaphur/ssh_keys
+dummy_password: $6$saltsalt$8mSza4XhP5Q5dOk2ayJnlbC1HjBMvysNzjnXdZqksySiLB0aQRqBT.TYiHfxVcZuD38dxJXa/QV8.QjUUKvBP/
+
+###############################################################################
+#		GIT
+###############################################################################
 git_homedir: /home/git
 git_username: git
 git_password: $6$saltsalt$8mSza4XhP5Q5dOk2ayJnlbC1HjBMvysNzjnXdZqksySiLB0aQRqBT.TYiHfxVcZuD38dxJXa/QV8.QjUUKvBP/
 
+
+###############################################################################
+#		NGINX
+###############################################################################
 # from ssl-cert package (debian)
 nginx_ssl_certificate: /etc/ssl/certs/ssl-cert-snakeoil.pem
 nginx_ssl_certificate_key: /etc/ssl/private/ssl-cert-snakeoil.key
 
+
+###############################################################################
+#		REDMINE
+###############################################################################
 redmine_prefix: /
 
-jenkins_prefix: /
-jenkins_port: 8080
 
+
+###############################################################################
+#		JENKINS
+###############################################################################
+# warning: deb package already creates jenkins with homedir /var/lib/jenkins
+#          changing jenkins home dir will probably cause terror & chaos
+# todo: yep, definitly will try changing homedir to see what happens
+jenkins_homedir: /home/jenkins
+jenkins_username: jenkins
+jenkins_password: $6$saltsalt$8mSza4XhP5Q5dOk2ayJnlbC1HjBMvysNzjnXdZqksySiLB0aQRqBT.TYiHfxVcZuD38dxJXa/QV8.QjUUKvBP/
+
+
+
+###############################################################################
+#		SONARQUBE
+###############################################################################
+sonarqube_homedir: /home/sonar
+sonarqube_username: sonar
+sonarqube_password: $6$saltsalt$8mSza4XhP5Q5dOk2ayJnlbC1HjBMvysNzjnXdZqksySiLB0aQRqBT.TYiHfxVcZuD38dxJXa/QV8.QjUUKvBP/
 sonarqube_prefix: /
 sonarqube_port: 8081
 

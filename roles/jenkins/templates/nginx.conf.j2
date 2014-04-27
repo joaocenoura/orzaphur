@@ -1,5 +1,5 @@
 upstream jenkins {
-  server 127.0.0.1:{{ jenkins_port }} fail_timeout=0;
+  server {{ webserver_ip }}:{{ webserver_port }} fail_timeout=0;
 }
 
 #server {
@@ -11,7 +11,7 @@ upstream jenkins {
 
 server {
   listen 443;
-  server_name jenkins.joaocenoura.com;
+  server_name {{ server_name }};
 
   access_log  /var/log/nginx/jenkins-ssl.access.log;
   error_log  /var/log/nginx/jenkins-ssl.error.log;
@@ -20,16 +20,10 @@ server {
   ssl_certificate  	 {{ nginx_ssl_certificate }};
   ssl_certificate_key  {{ nginx_ssl_certificate_key }};
 
-  location {{ jenkins_prefix }} {
+  location {{ webserver_prefix }} {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $http_host;
-    proxy_pass http://127.0.0.1:{{ jenkins_port }}{{ jenkins_prefix }};
-
-    #proxy_set_header        Host $host;
-    #proxy_set_header        X-Real-IP $remote_addr;
-    #proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-    #proxy_redirect          http:// https://;
-    #proxy_pass              http://jenkins;
+    proxy_pass http://{{ webserver_ip }}:{{ webserver_port }}{{ webserver_prefix }};
   }
 
 }

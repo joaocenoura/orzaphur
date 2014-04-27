@@ -1,0 +1,4 @@
+---
+user: "{{ sonarqube_username }}"
+password: "{{ sonarqube_password }}"
+homedir: "{{ sonarqube_homedir }}"

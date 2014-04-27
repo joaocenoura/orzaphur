@@ -14,14 +14,14 @@ JAVA_ARGS="-Djava.awt.headless=true"  # Allow graphs etc. to work even when an X
 PIDFILE=/var/run/jenkins/jenkins.pid
 
 # user and group to be invoked as (default to jenkins)
-JENKINS_USER=jenkins
-JENKINS_GROUP=jenkins
+JENKINS_USER={{ user }}
+JENKINS_GROUP={{ group }}
 
 # location of the jenkins war file
 JENKINS_WAR=/usr/share/jenkins/jenkins.war
 
 # jenkins home location
-JENKINS_HOME=/var/lib/jenkins
+JENKINS_HOME={{ install_dir }}
 
 # set this to false if you don't want Hudson to run by itself
 # in this set up, you are expected to provide a servlet container
@@ -40,13 +40,13 @@ JENKINS_LOG=/var/log/jenkins/$NAME.log
 MAXOPENFILES=8192
 
 # port for HTTP connector (default 8080; disable with -1)
-HTTP_PORT={{ jenkins_port }}
+HTTP_PORT={{ webserver_port }}
 
 # port for AJP connector (disabled by default)
 AJP_PORT=-1
 
 # servlet context, important if you want to use apache proxying  
-PREFIX={{ jenkins_prefix }}
+PREFIX={{ webserver_prefix }}
 
 # arguments to pass to jenkins.
 # --javahome=$JAVA_HOME

@@ -1,0 +1,4 @@
+---
+user: "{{ git_username }}"
+password: "{{ git_password }}"
+homedir: "{{ git_homedir }}"

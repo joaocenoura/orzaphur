@@ -1,0 +1,4 @@
+---
+user: redmine
+password: "{{ dummy_password }}"
+homedir: /home/redmine

@@ -1,0 +1,11 @@
+---
+user: "{{ jenkins_username }}"
+group: jenkins
+password: "{{ jenkins_password }}"
+homedir: "{{ jenkins_homedir }}"
+install_dir: "{{ homedir }}/jenkins"
+
+server_name: jenkins.joaocenoura.com
+webserver_ip: 127.0.0.1
+webserver_port: 8080
+webserver_prefix: /
