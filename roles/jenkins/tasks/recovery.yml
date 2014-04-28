@@ -1,0 +1,51 @@
+---
+###############################################################################
+#   JENKINS BACKUP & RESTORE
+###############################################################################
+
+# backup
+- name: checkout backup repo
+  git: repo=ssh://git@127.0.0.1/home/git/backup.git dest=/home/jenkins/backup.git version=master accept_hostkey=true update=false
+  sudo_user: jenkins
+  ignore_errors: yes
+  tags:
+    - backup
+    - restore
+
+- name: update backup repo (if possible)
+  git: repo=ssh://git@127.0.0.1/home/git/backup.git dest=/home/jenkins/backup.git version=master accept_hostkey=true
+  sudo_user: jenkins
+  ignore_errors: yes
+  tags:
+    - backup
+    - restore
+
+- name: create backup folder (if necessary)
+  command: mkdir -p {{ homedir }}/backup.git/{{ user }} creates=true
+  tags: backup
+
+- name: rsync jenkins to backup repo
+  command: rsync -a --delete {{ install_dir }} {{ homedir }}/backup.git/{{ user }}
+  sudo_user: jenkins
+  tags: backup
+
+- name: git stage backup
+  command: git add {{ homedir }}/backup.git chdir={{ homedir }}/backup.git
+  sudo_user: jenkins
+  tags: backup
+
+- name: git commit backup
+  command: git commit -m "jenkins backup triggered by ansible" chdir={{ homedir }}/backup.git
+  sudo_user: jenkins
+  tags: backup
+
+- name: git push backup
+  command: git push origin master chdir={{ homedir }}/backup.git
+  sudo_user: jenkins
+  tags: backup
+
+# restore
+- name: rsync backup repo to jenkins
+  command: rsync -a --delete {{ homedir }}/backup.git/{{ user }} {{ install_dir }}
+  sudo_user: jenkins
+  tags: restore
